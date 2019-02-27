@@ -230,7 +230,27 @@ and (case when Bookings.memid=0 then guestcost*slots>30 else membercost*slots>30
 order by cost desc
 
 /* Q9: This time, produce the same result as in Q8, but using a subquery. */
-
+select member, facility, cost from (
+	select 
+		concat(Members.firstname,' ',Members.surname) as member,
+		Facilities.name as facility,
+		case
+			when Members.memid = 0 then
+				Bookings.slots*Facilities.guestcost
+			else
+				Bookings.slots*Facilities.membercost
+		end as cost
+		from
+			country_club.Members
+			 join country_club.Bookings 
+				on Members.memid = Bookings.memid
+			 join country_club.Facilities
+				on Bookings.facid = Facilities.facid
+		where
+			date(starttime)='2012-09-14'
+	) as bks
+	where cost > 30
+order by cost desc
 
 /* Q10: Produce a list of facilities with a total revenue less than 1000.
 The output of facility name and total revenue, sorted by revenue. Remember
