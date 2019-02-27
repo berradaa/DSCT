@@ -221,7 +221,7 @@ different costs to members (the listed costs are per half-hour 'slot'), and
 the guest user's ID is always 0. Include in your output the name of the
 facility, the name of the member formatted as a single column, and the cost.
 Order by descending cost, and do not use any subqueries. */
-select Facilities.name, concat(Members.firstname,' ',Members.surname) as Fullname, case when Bookings.memid=0 then guestcost*slots else membercost*slots end as cost
+select Facilities.name as facility, concat(Members.firstname,' ',Members.surname) as member, case when Bookings.memid=0 then guestcost*slots else membercost*slots end as cost
 from country_club.Bookings
 join country_club.Members on Bookings.memid=Members.memid
 Join country_club.Facilities on Bookings.facid=Facilities.facid
@@ -255,3 +255,14 @@ order by cost desc
 /* Q10: Produce a list of facilities with a total revenue less than 1000.
 The output of facility name and total revenue, sorted by revenue. Remember
 that there's a different cost for guests and members! */
+select name as Facility, Total_revenue from (
+	select faclts.name, sum(case 
+				when memid = 0 then slots * faclts.guestcost
+				else slots * faclts.membercost
+			end) as Total_revenue
+		from country_club.Bookings bkgs
+		inner join country_club.Facilities faclts
+			on bkgs.facid = faclts.facid
+		group by faclts.name
+	) as summed where Total_revenue < 1000
+order by Total_revenue
