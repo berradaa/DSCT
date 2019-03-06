@@ -207,13 +207,13 @@ Include in your output the name of the court, and the name of the member
 formatted as a single column. Ensure no duplicate data, and order by
 the member name. */
 
-select concat(Members.firstname,' ',Members.surname) as Fullname, Facilities.name
+select concat(Members.firstname,' ',Members.surname) as Membername, Facilities.name as Facility
 from country_club.Bookings
 join country_club.Members on Bookings.memid=Members.memid
 Join country_club.Facilities on Bookings.facid=Facilities.facid
 where Facilities.name in ('Tennis Court 1', 'Tennis Court 2')
 group by Bookings.memid, Bookings.facid
-order by Fullname
+order by Membername
 
 /* Q8: How can you produce a list of bookings on the day of 2012-09-14 which
 will cost the member (or guest) more than $30? Remember that guests have
@@ -221,7 +221,7 @@ different costs to members (the listed costs are per half-hour 'slot'), and
 the guest user's ID is always 0. Include in your output the name of the
 facility, the name of the member formatted as a single column, and the cost.
 Order by descending cost, and do not use any subqueries. */
-select Facilities.name as facility, concat(Members.firstname,' ',Members.surname) as member, case when Bookings.memid=0 then guestcost*slots else membercost*slots end as cost
+select concat(Members.firstname,' ',Members.surname) as member, Facilities.name as facility, case when Bookings.memid=0 then guestcost*slots else membercost*slots end as cost
 from country_club.Bookings
 join country_club.Members on Bookings.memid=Members.memid
 Join country_club.Facilities on Bookings.facid=Facilities.facid
